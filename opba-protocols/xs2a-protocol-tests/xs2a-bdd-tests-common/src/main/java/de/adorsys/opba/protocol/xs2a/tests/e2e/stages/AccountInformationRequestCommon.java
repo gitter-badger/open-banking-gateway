@@ -28,10 +28,10 @@ import static de.adorsys.opba.protocol.xs2a.tests.e2e.stages.AisStagesCommonUtil
 import static de.adorsys.opba.protocol.xs2a.tests.e2e.stages.AisStagesCommonUtil.FINTECH_REDIR_NOK;
 import static de.adorsys.opba.protocol.xs2a.tests.e2e.stages.AisStagesCommonUtil.GET_CONSENT_AUTH_STATE;
 import static de.adorsys.opba.protocol.xs2a.tests.e2e.stages.AisStagesCommonUtil.MAX_MUSTERMAN;
-import static de.adorsys.opba.protocol.xs2a.tests.e2e.stages.AisStagesCommonUtil.withDefaultHeaders;
 import static de.adorsys.opba.restapi.shared.HttpHeaders.REDIRECT_CODE;
 import static de.adorsys.opba.restapi.shared.HttpHeaders.SERVICE_SESSION_ID;
-import static de.adorsys.opba.restapi.shared.HttpHeaders.X_REQUEST_ID;
+import static de.adorsys.opba.protocol.xs2a.tests.e2e.stages.AisStagesCommonUtil.withDefaultHeaders;
+import static de.adorsys.opba.protocol.xs2a.tests.e2e.stages.AisStagesCommonUtil.witSignatureHeaders;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.LOCATION;
 
@@ -135,13 +135,12 @@ public class AccountInformationRequestCommon<SELF extends AccountInformationRequ
     }
 
     public SELF user_denied_consent() {
-        ExtractableResponse<Response> response = RestAssured
+        ExtractableResponse<Response> response = witSignatureHeaders(RestAssured
                 .given()
                     .header(X_XSRF_TOKEN, UUID.randomUUID().toString())
-                    .header(X_REQUEST_ID, UUID.randomUUID().toString())
                     .queryParam(REDIRECT_CODE_QUERY, redirectCode)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .body("{}")
+                    .body("{}"))
                 .when()
                     .post(DENY_CONSENT_AUTH_ENDPOINT, serviceSessionId)
                 .then()
@@ -349,13 +348,12 @@ public class AccountInformationRequestCommon<SELF extends AccountInformationRequ
     }
 
     private ExtractableResponse<Response> provideParametersToBankingProtocolWithBody(String uriPath, String body, HttpStatus status) {
-        ExtractableResponse<Response> response = RestAssured
+        ExtractableResponse<Response> response = witSignatureHeaders(RestAssured
                 .given()
                     .header(X_XSRF_TOKEN, UUID.randomUUID().toString())
-                    .header(X_REQUEST_ID, UUID.randomUUID().toString())
                     .queryParam(REDIRECT_CODE_QUERY, redirectCode)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .body(body)
+                    .body(body))
                 .when()
                     .post(uriPath, serviceSessionId)
                 .then()
@@ -382,11 +380,10 @@ public class AccountInformationRequestCommon<SELF extends AccountInformationRequ
 
     @SneakyThrows
     private void updateAvailableScas() {
-        ExtractableResponse<Response> response = RestAssured
+        ExtractableResponse<Response> response = witSignatureHeaders(RestAssured
                 .given()
                     .header(X_XSRF_TOKEN, UUID.randomUUID().toString())
-                    .header(X_REQUEST_ID, UUID.randomUUID().toString())
-                    .queryParam(REDIRECT_CODE_QUERY, redirectCode)
+                    .queryParam(REDIRECT_CODE_QUERY, redirectCode))
                 .when()
                     .get(GET_CONSENT_AUTH_STATE, serviceSessionId)
                 .then()
