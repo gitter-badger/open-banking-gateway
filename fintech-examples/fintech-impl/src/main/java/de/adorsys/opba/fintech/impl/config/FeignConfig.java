@@ -10,8 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.UUID;
 
 import static de.adorsys.opba.fintech.impl.tppclients.HeaderFields.X_REQUEST_SIGNATURE;
@@ -34,23 +33,23 @@ public class FeignConfig {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-        OffsetDateTime dateTime = OffsetDateTime.now(ZoneOffset.UTC);
+        Instant instant = Instant.now();
         // This allows OPBA Consent API to compute PSU IP address itself.
         return requestTemplate -> {
             requestTemplate.header(COMPUTE_PSU_IP_ADDRESS, "true");
-            fillSecurityHeaders(dateTime, requestTemplate);
+            fillSecurityHeaders(instant, requestTemplate);
         };
     }
 
-    private void fillSecurityHeaders(OffsetDateTime dateTime, RequestTemplate requestTemplate) {
+    private void fillSecurityHeaders(Instant dateTime, RequestTemplate requestTemplate) {
         requestTemplate.header(X_REQUEST_SIGNATURE, calculateSignature(requestTemplate.request(), dateTime));
         requestTemplate.header(FINTECH_ID, tppProperties.getFintechID());
         requestTemplate.header(X_TIMESTAMP_UTC, dateTime.toString());
     }
 
-    private String calculateSignature(Request request, OffsetDateTime offsetDateTime) {
+    private String calculateSignature(Request request, Instant instant) {
         String xRequestId = request.headers().get(X_REQUEST_ID).stream().findFirst().orElse(null);
-        DataToSign dataToSign = new DataToSign(UUID.fromString(xRequestId), offsetDateTime);
+        DataToSign dataToSign = new DataToSign(UUID.fromString(xRequestId), instant);
         return requestSigningService.signature(dataToSign);
     }
 }

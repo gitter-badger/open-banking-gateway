@@ -1,8 +1,8 @@
 package de.adorsys.opba.api.security.filter;
 
 
-import de.adorsys.opba.api.security.domain.HttpHeaders;
 import de.adorsys.opba.api.security.domain.DataToSign;
+import de.adorsys.opba.api.security.domain.HttpHeaders;
 import de.adorsys.opba.api.security.service.RequestVerifyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,7 +32,7 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
         String requestTimeStamp = request.getHeader(HttpHeaders.X_TIMESTAMP_UTC);
         String xRequestSignature = request.getHeader(HttpHeaders.X_REQUEST_SIGNATURE);
 
-        OffsetDateTime dateTime = OffsetDateTime.parse(requestTimeStamp);
+        Instant instant = Instant.parse(requestTimeStamp);
 
         String fintechApiKey = fintechKeysMap.get(fintechId);
 
@@ -43,7 +42,7 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        DataToSign dataToSign = new DataToSign(UUID.fromString(xRequestId), dateTime);
+        DataToSign dataToSign = new DataToSign(UUID.fromString(xRequestId), instant);
 
         boolean verificationResult = requestVerifyingService.verify(xRequestSignature, fintechApiKey, dataToSign);
 
@@ -52,7 +51,7 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (isRequestExpired(dateTime)) {
+        if (isRequestExpired(instant)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Timestamp validation failed");
             return;
         }
@@ -60,8 +59,8 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isRequestExpired(OffsetDateTime operationTime) {
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+    private boolean isRequestExpired(Instant operationTime) {
+        Instant now = Instant.now();
         return now.plus(requestTimeLimit).isBefore(operationTime)
                        || now.minus(requestTimeLimit).isAfter(operationTime);
     }

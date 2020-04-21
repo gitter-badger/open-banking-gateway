@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -17,24 +17,24 @@ import java.util.stream.Collectors;
 public class DataToSign<T> {
     private final ObjectMapper localMapper = buildObjectMapper();
     private UUID xRequestId;
-    private OffsetDateTime requestDateTime;
+    private Instant instant;
     private final T additionalFields;
 
-    public DataToSign(UUID xRequestId, OffsetDateTime requestDateTime) {
+    public DataToSign(UUID xRequestId, Instant instant) {
         this.xRequestId = xRequestId;
-        this.requestDateTime = requestDateTime;
+        this.instant = instant;
         this.additionalFields = null;
     }
 
-    public DataToSign(UUID xRequestId, OffsetDateTime requestDateTime, T additionalFields) {
+    public DataToSign(UUID xRequestId, Instant instant, T additionalFields) {
         this.xRequestId = xRequestId;
-        this.requestDateTime = requestDateTime;
+        this.instant = instant;
         this.additionalFields = additionalFields;
     }
 
     public String convertDataToString() {
         return new StringBuilder().append(xRequestId)
-                       .append(requestDateTime)
+                       .append(instant)
                        .append(mapAdditionalFieldsToString())
                        .toString();
     }
