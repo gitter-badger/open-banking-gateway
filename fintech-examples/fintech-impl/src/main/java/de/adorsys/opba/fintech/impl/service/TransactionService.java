@@ -20,6 +20,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static de.adorsys.opba.fintech.impl.tppclients.Consts.COMPUTE_X_REQUEST_SIGNATURE;
+import static de.adorsys.opba.fintech.impl.tppclients.Consts.COMPUTE_X_TIMESTAMP_UTC;
+import static de.adorsys.opba.fintech.impl.tppclients.Consts.COMPUTE_FINTECH_ID;
+
 @Service
 @Slf4j
 public class TransactionService extends HandleAcceptedService {
@@ -98,9 +102,9 @@ public class TransactionService extends HandleAcceptedService {
                 RedirectUrlsEntity.buildOkUrl(uiConfig, redirectCode),
                 RedirectUrlsEntity.buildNokUrl(uiConfig, redirectCode),
                 xRequestId,
-                null,
-                null,
-                null,
+                COMPUTE_X_TIMESTAMP_UTC,
+                COMPUTE_X_REQUEST_SIGNATURE,
+                COMPUTE_FINTECH_ID,
                 bankId,
                 sessionEntity.getPsuConsentSession(),
                 sessionEntity.getConsentConfirmed() ? sessionEntity.getServiceSessionId() : null,

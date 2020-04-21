@@ -6,4 +6,9 @@ public class Consts {
     public static final String COOKIE_REDIRECT_COOKIE_NAME = "REDIRECT-COOKIE";
     public static final String HEADER_XSRF_TOKEN = "X-XSRF-TOKEN";
     public static final String HEADER_X_REQUEST_ID = "X-REQUEST-ID";
+
+    // Actual values are set in feign request interceptor (FeignConfig.java)
+    public static final String COMPUTE_X_TIMESTAMP_UTC = null;
+    public static final String COMPUTE_X_REQUEST_SIGNATURE = null;
+    public static final String COMPUTE_FINTECH_ID = null;
 }

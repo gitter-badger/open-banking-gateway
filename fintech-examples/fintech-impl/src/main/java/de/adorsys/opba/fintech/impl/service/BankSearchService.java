@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static de.adorsys.opba.fintech.impl.tppclients.Consts.COMPUTE_X_REQUEST_SIGNATURE;
+import static de.adorsys.opba.fintech.impl.tppclients.Consts.COMPUTE_X_TIMESTAMP_UTC;
+import static de.adorsys.opba.fintech.impl.tppclients.Consts.COMPUTE_FINTECH_ID;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -29,9 +33,9 @@ public class BankSearchService {
         BankSearchResponse bankSearchResponse = tppBankSearchClient.bankSearchGET(
                 xRequestId,
                 keyword,
-                null,
-                null,
-                null,
+                COMPUTE_X_TIMESTAMP_UTC,
+                COMPUTE_X_REQUEST_SIGNATURE,
+                COMPUTE_FINTECH_ID,
                 start,
                 max).getBody();
 
@@ -53,9 +57,9 @@ public class BankSearchService {
                 ManualMapper.fromTppToFintech(tppBankSearchClient.bankProfileGET(
                         xRequestId,
                         bankId,
-                        null,
-                        null,
-                        null
+                        COMPUTE_X_TIMESTAMP_UTC,
+                        COMPUTE_X_REQUEST_SIGNATURE,
+                        COMPUTE_FINTECH_ID
                 ).getBody().getBankProfileDescriptor()));
     }
 }

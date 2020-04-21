@@ -1,6 +1,6 @@
 package de.adorsys.opba.api.security.service.impl;
 
-import de.adorsys.opba.api.security.domain.SignData;
+import de.adorsys.opba.api.security.domain.DataToSign;
 import de.adorsys.opba.api.security.service.RequestSigningService;
 import de.adorsys.opba.api.security.service.SignatureParams;
 import io.jsonwebtoken.Jwts;
@@ -31,11 +31,11 @@ public class RsaJwtsSigningServiceImpl implements RequestSigningService {
     }
 
     @Override
-    public String sign(SignData signData) {
+    public String sign(DataToSign dataToSign) {
         return Jwts.builder()
                        .setSubject(signSubject)
                        .setIssuer(signIssuer)
-                       .claim(SignatureParams.CLAIM_NAME.getValue(), signData.convertDataToString())
+                       .claim(SignatureParams.CLAIM_NAME.getValue(), dataToSign.convertDataToString())
                        .signWith(privateKey, algorithm)
                        .compact();
     }

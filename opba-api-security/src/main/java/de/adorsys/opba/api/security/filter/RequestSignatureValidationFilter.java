@@ -2,7 +2,7 @@ package de.adorsys.opba.api.security.filter;
 
 
 import de.adorsys.opba.api.security.domain.HttpHeaders;
-import de.adorsys.opba.api.security.domain.SignData;
+import de.adorsys.opba.api.security.domain.DataToSign;
 import de.adorsys.opba.api.security.service.RequestVerifyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +42,9 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        SignData signData = new SignData(UUID.fromString(xRequestId), dateTime);
+        DataToSign dataToSign = new DataToSign(UUID.fromString(xRequestId), dateTime);
 
-        boolean verificationResult = requestVerifyingService.verify(xRequestSignature, fintechApiKey, signData);
+        boolean verificationResult = requestVerifyingService.verify(xRequestSignature, fintechApiKey, dataToSign);
 
         if (!verificationResult) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Signature verification error");

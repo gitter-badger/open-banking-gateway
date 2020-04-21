@@ -14,19 +14,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class SignData<T> {
+public class DataToSign<T> {
     private final ObjectMapper localMapper = buildObjectMapper();
     private UUID xRequestId;
     private OffsetDateTime requestDateTime;
     private final T additionalFields;
 
-    public SignData(UUID xRequestId, OffsetDateTime requestDateTime) {
+    public DataToSign(UUID xRequestId, OffsetDateTime requestDateTime) {
         this.xRequestId = xRequestId;
         this.requestDateTime = requestDateTime;
         this.additionalFields = null;
     }
 
-    public SignData(UUID xRequestId, OffsetDateTime requestDateTime, T additionalFields) {
+    public DataToSign(UUID xRequestId, OffsetDateTime requestDateTime, T additionalFields) {
         this.xRequestId = xRequestId;
         this.requestDateTime = requestDateTime;
         this.additionalFields = additionalFields;

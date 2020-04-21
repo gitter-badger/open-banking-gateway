@@ -1,6 +1,6 @@
 package de.adorsys.opba.api.security.service.impl;
 
-import de.adorsys.opba.api.security.domain.SignData;
+import de.adorsys.opba.api.security.domain.DataToSign;
 import de.adorsys.opba.api.security.service.RequestVerifyingService;
 import de.adorsys.opba.api.security.service.SignatureParams;
 import io.jsonwebtoken.Claims;
@@ -20,7 +20,7 @@ public class RsaJwtsVerifyingServiceImpl implements RequestVerifyingService {
     private static final String ALGORITHM = SignatureParams.ALGORITHM_RSA.getValue();
 
     @Override
-    public boolean verify(String signature, String encodedPublicKey, SignData signData) {
+    public boolean verify(String signature, String encodedPublicKey, DataToSign dataToSign) {
         PublicKey publicKey = getRsaPublicKey(encodedPublicKey);
 
         if (publicKey == null) {
@@ -31,7 +31,7 @@ public class RsaJwtsVerifyingServiceImpl implements RequestVerifyingService {
             JwtParser parser = Jwts.parserBuilder().setSigningKey(publicKey).build();
             Claims claims = parser.parseClaimsJws(signature).getBody();
 
-            return signData.convertDataToString()
+            return dataToSign.convertDataToString()
                            .equals(claims.get(SignatureParams.CLAIM_NAME.getValue()));
 
         } catch (Exception e) {

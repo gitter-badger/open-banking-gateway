@@ -1,10 +1,11 @@
 package de.adorsys.opba.fintech.impl.config;
 
-import de.adorsys.opba.api.security.domain.SignData;
+import de.adorsys.opba.api.security.domain.DataToSign;
 import de.adorsys.opba.api.security.service.RequestSigningService;
 import de.adorsys.opba.fintech.impl.properties.TppProperties;
 import feign.Request;
 import feign.RequestInterceptor;
+import feign.RequestTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,15 +38,19 @@ public class FeignConfig {
         // This allows OPBA Consent API to compute PSU IP address itself.
         return requestTemplate -> {
             requestTemplate.header(COMPUTE_PSU_IP_ADDRESS, "true");
-            requestTemplate.header(X_REQUEST_SIGNATURE, calculateSignature(requestTemplate.request(), dateTime));
-            requestTemplate.header(FINTECH_ID, tppProperties.getFintechID());
-            requestTemplate.header(X_TIMESTAMP_UTC, dateTime.toString());
+            fillSecurityHeaders(dateTime, requestTemplate);
         };
+    }
+
+    private void fillSecurityHeaders(OffsetDateTime dateTime, RequestTemplate requestTemplate) {
+        requestTemplate.header(X_REQUEST_SIGNATURE, calculateSignature(requestTemplate.request(), dateTime));
+        requestTemplate.header(FINTECH_ID, tppProperties.getFintechID());
+        requestTemplate.header(X_TIMESTAMP_UTC, dateTime.toString());
     }
 
     private String calculateSignature(Request request, OffsetDateTime offsetDateTime) {
         String xRequestId = request.headers().get(X_REQUEST_ID).stream().findFirst().orElse(null);
-        SignData signData = new SignData(UUID.fromString(xRequestId), offsetDateTime);
-        return requestSigningService.sign(signData);
+        DataToSign dataToSign = new DataToSign(UUID.fromString(xRequestId), offsetDateTime);
+        return requestSigningService.sign(dataToSign);
     }
 }
