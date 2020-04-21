@@ -67,6 +67,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.opba</groupId>
+            <artifactId>opba-banking-rest-api</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- DB dependencies -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -153,12 +160,6 @@
             <artifactId>h2</artifactId>
             <version>${h2.database.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.adorsys.opba</groupId>
-            <artifactId>opba-banking-rest-api</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

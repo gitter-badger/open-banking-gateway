@@ -31,7 +31,7 @@ public class RsaJwtsSigningServiceImpl implements RequestSigningService {
     }
 
     @Override
-    public String sign(DataToSign dataToSign) {
+    public String signature(DataToSign dataToSign) {
         return Jwts.builder()
                        .setSubject(signSubject)
                        .setIssuer(signIssuer)

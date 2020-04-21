@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,7 +61,7 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
     }
 
     private boolean operationDateTimeNotWithinLimit(OffsetDateTime operationTime) {
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         return now.plus(requestTimeLimit).isBefore(operationTime)
                        || now.minus(requestTimeLimit).isAfter(operationTime);
     }
