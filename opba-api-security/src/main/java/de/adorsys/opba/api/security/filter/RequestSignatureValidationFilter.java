@@ -52,7 +52,7 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (operationDateTimeNotWithinLimit(dateTime)) {
+        if (isRequestExpired(dateTime)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Timestamp validation failed");
             return;
         }
@@ -60,7 +60,7 @@ public class RequestSignatureValidationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean operationDateTimeNotWithinLimit(OffsetDateTime operationTime) {
+    private boolean isRequestExpired(OffsetDateTime operationTime) {
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         return now.plus(requestTimeLimit).isBefore(operationTime)
                        || now.minus(requestTimeLimit).isAfter(operationTime);

@@ -51,6 +51,6 @@ public class FeignConfig {
     private String calculateSignature(Request request, OffsetDateTime offsetDateTime) {
         String xRequestId = request.headers().get(X_REQUEST_ID).stream().findFirst().orElse(null);
         DataToSign dataToSign = new DataToSign(UUID.fromString(xRequestId), offsetDateTime);
-        return requestSigningService.sign(dataToSign);
+        return requestSigningService.signature(dataToSign);
     }
 }
