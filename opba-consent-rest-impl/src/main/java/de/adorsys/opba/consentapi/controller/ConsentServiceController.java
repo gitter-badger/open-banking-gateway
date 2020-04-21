@@ -1,11 +1,11 @@
 package de.adorsys.opba.consentapi.controller;
 
 import de.adorsys.opba.consentapi.Const;
-import de.adorsys.opba.consentapi.model.generated.ConsentAuth;
 import de.adorsys.opba.consentapi.model.generated.DenyRequest;
 import de.adorsys.opba.consentapi.model.generated.InlineResponse200;
 import de.adorsys.opba.consentapi.model.generated.PsuAuthRequest;
 import de.adorsys.opba.consentapi.model.generated.ScaUserData;
+import de.adorsys.opba.consentapi.model.generated.ConsentAuth;
 import de.adorsys.opba.consentapi.resource.generated.ConsentAuthorizationApi;
 import de.adorsys.opba.consentapi.service.FromAspspMapper;
 import de.adorsys.opba.consentapi.service.mapper.AisConsentMapper;
@@ -60,17 +60,17 @@ public class ConsentServiceController implements ConsentAuthorizationApi {
             String authId,
             String redirectCode,
             String xTimestampUTC,
-            byte[] xRequestSignature,
+            String xRequestSignature,
             String fintechId) {
 
         return authorizationStateService.execute(
                 AuthorizationRequest.builder()
                         .facadeServiceable(FacadeServiceableRequest.builder()
-                                // Get rid of CGILIB here by copying:
-                                .uaContext(userAgentContext.toBuilder().build())
-                                .redirectCode(redirectCode)
-                                .authorizationSessionId(authId)
-                                .build()
+                                                   // Get rid of CGILIB here by copying:
+                                                   .uaContext(userAgentContext.toBuilder().build())
+                                                   .redirectCode(redirectCode)
+                                                   .authorizationSessionId(authId)
+                                                   .build()
                         )
                         .build()
         ).thenApply((FacadeResult<AuthStateBody> result) -> redirectionOnlyToOkMapper.translate(result, authStateMapper));
@@ -83,26 +83,26 @@ public class ConsentServiceController implements ConsentAuthorizationApi {
             String authId,
             PsuAuthRequest body,
             String xTimestampUTC,
-            byte[] xRequestSignature,
+            String xRequestSignature,
             String fintechId,
             String redirectCode) {
 
         return updateAuthorizationService.execute(
                 AuthorizationRequest.builder()
                         .facadeServiceable(FacadeServiceableRequest.builder()
-                                // Get rid of CGILIB here by copying:
-                                .uaContext(userAgentContext.toBuilder().build())
-                                .redirectCode(redirectCode)
-                                .authorizationSessionId(authId)
-                                .requestId(xRequestID)
-                                .build()
+                                                   // Get rid of CGILIB here by copying:
+                                                   .uaContext(userAgentContext.toBuilder().build())
+                                                   .redirectCode(redirectCode)
+                                                   .authorizationSessionId(authId)
+                                                   .requestId(xRequestID)
+                                                   .build()
                         )
                         .aisConsent(null == body.getConsentAuth() ? null : aisConsentMapper.map(body))
                         .scaAuthenticationData(body.getScaAuthenticationData())
                         .extras(extrasMapper.map(body.getExtras()))
                         .build()
         ).thenApply((FacadeResult<UpdateAuthBody> result) ->
-                mapper.translate(result, new NoOpMapper<>()));
+                            mapper.translate(result, new NoOpMapper<>()));
     }
 
     @Override
@@ -112,62 +112,62 @@ public class ConsentServiceController implements ConsentAuthorizationApi {
             String xXsrfToken,
             String authId,
             String xTimestampUTC,
-            byte[] xRequestSignature,
+            String xRequestSignature,
             String fintechId) {
 
         return denyAuthorizationService.execute(DenyAuthorizationRequest.builder()
-                .facadeServiceable(FacadeServiceableRequest.builder()
-                        // Get rid of CGILIB here by copying:
-                        .uaContext(userAgentContext.toBuilder().build())
-                        .authorizationSessionId(authId)
-                        .requestId(xRequestID)
-                        .build()
-                )
-                .build()
+                                                        .facadeServiceable(FacadeServiceableRequest.builder()
+                                                                                   // Get rid of CGILIB here by copying:
+                                                                                   .uaContext(userAgentContext.toBuilder().build())
+                                                                                   .authorizationSessionId(authId)
+                                                                                   .requestId(xRequestID)
+                                                                                   .build()
+                                                        )
+                                                        .build()
         ).thenApply((FacadeResult<DenyAuthBody> result) -> mapper.translate(result, new NoOpMapper<>()));
     }
 
     @Override
     public CompletableFuture fromAspspOkUsingGET(
-        String authId,
-        String redirectState,
-        String redirectCode,
-        String xTimestampUTC,
-        byte[] xRequestSignature,
-        String fintechId) {
+            String authId,
+            String redirectState,
+            String redirectCode,
+            String xTimestampUTC,
+            String xRequestSignature,
+            String fintechId) {
 
         return fromAspspRedirectHandler.execute(
-            FromAspspRequest.builder()
-                .facadeServiceable(FacadeServiceableRequest.builder()
-                    .redirectCode(redirectCode)
-                    .authorizationSessionId(authId)
-                    .build()
-                )
-                .isOk(true)
-                .build()
+                FromAspspRequest.builder()
+                        .facadeServiceable(FacadeServiceableRequest.builder()
+                                                   .redirectCode(redirectCode)
+                                                   .authorizationSessionId(authId)
+                                                   .build()
+                        )
+                        .isOk(true)
+                        .build()
         ).thenApply(aspspMapper::translate);
     }
 
     @Override
     public CompletableFuture fromAspspNokUsingGET(
-        String authId,
-        String redirectState,
-        String redirectCode,
-        String xTimestampUTC,
-        byte[] xRequestSignature,
-        String fintechId) {
+            String authId,
+            String redirectState,
+            String redirectCode,
+            String xTimestampUTC,
+            String xRequestSignature,
+            String fintechId) {
 
         return fromAspspRedirectHandler.execute(
-            FromAspspRequest.builder()
-                .facadeServiceable(FacadeServiceableRequest.builder()
-                    .redirectCode(redirectCode)
-                    .authorizationSessionId(authId)
-                    .build()
-                )
-                .isOk(false)
-                .build()
+                FromAspspRequest.builder()
+                        .facadeServiceable(FacadeServiceableRequest.builder()
+                                                   .redirectCode(redirectCode)
+                                                   .authorizationSessionId(authId)
+                                                   .build()
+                        )
+                        .isOk(false)
+                        .build()
         ).thenApply((FacadeResult<UpdateAuthBody> result) ->
-                mapper.translate(result, new NoOpMapper<>()));
+                            mapper.translate(result, new NoOpMapper<>()));
     }
 
     public static class NoOpMapper<T> implements FacadeResponseBodyToRestBodyMapper<T, T> {

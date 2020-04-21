@@ -433,7 +433,6 @@ components:
         A signature of the request by the TPP fintech.
       schema:
         type: string
-        format: byte
 
     fintech_id:
       name: fintech_id
